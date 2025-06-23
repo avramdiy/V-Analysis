@@ -2,6 +2,7 @@ from flask import Flask, render_template_string, Response
 import pandas as pd
 import io
 import matplotlib.pyplot as plt
+import mplfinance as mpf
 
 app = Flask(__name__)
 
@@ -105,6 +106,29 @@ def monthly_avg():
         plt.savefig(buf, format='png')
         buf.seek(0)
         plt.close()
+
+        return Response(buf, mimetype='image/png')
+    except Exception as e:
+        return f"An error occurred while processing the file: {e}"
+
+@app.route('/candlestick')
+def candlestick_chart():
+    file_path = r"C:\Users\avram\OneDrive\Desktop\TRG Week 29\v.us.txt"
+    try:
+        # Load and filter the DataFrame
+        df = pd.read_csv(file_path, sep=",", engine="python", parse_dates=['Date'], infer_datetime_format=True)
+        df = df[(df['Date'] >= "2008-11-10") & (df['Date'] <= "2017-11-10")]
+        if 'OpenInt' in df.columns:
+            df = df.drop(columns=['OpenInt'])
+
+        # Format DataFrame for mplfinance
+        df.set_index('Date', inplace=True)
+        df = df[['Open', 'High', 'Low', 'Close']]
+
+        # Plot the candlestick chart
+        buf = io.BytesIO()
+        mpf.plot(df, type='candle', style='yahoo', savefig=buf)
+        buf.seek(0)
 
         return Response(buf, mimetype='image/png')
     except Exception as e:

@@ -25,3 +25,5 @@
 - Visualize the monthly average "Open" price over time through "/monthly_avg"
 
 ### 5th Commit
+
+- Visualize a candlestick chart shows detailed price movements for specific periods through "/candlestick"
