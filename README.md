@@ -22,4 +22,6 @@
 
 ### 4th Commit
 
+- Visualize the monthly average "Open" price over time through "/monthly_avg"
+
 ### 5th Commit

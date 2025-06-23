@@ -78,5 +78,37 @@ def line_chart():
     except Exception as e:
         return f"An error occurred while processing the file: {e}"
 
+@app.route('/monthly_avg')
+def monthly_avg():
+    file_path = r"C:\Users\avram\OneDrive\Desktop\TRG Week 29\v.us.txt"
+    try:
+        # Load and filter the DataFrame
+        df = pd.read_csv(file_path, sep=",", engine="python", parse_dates=['Date'], infer_datetime_format=True)
+        df = df[(df['Date'] >= "2008-11-10") & (df['Date'] <= "2017-11-10")]
+        if 'OpenInt' in df.columns:
+            df = df.drop(columns=['OpenInt'])
+
+        # Calculate monthly averages
+        df['Month'] = df['Date'].dt.to_period('M')
+        monthly_avg = df.groupby('Month')['Open'].mean()
+
+        # Plot the data
+        plt.figure(figsize=(14, 7))
+        monthly_avg.plot(kind='line', color='black', marker='o')
+        plt.title('Monthly Average Open Price (2008-2017)', fontsize=16)
+        plt.xlabel('Month', fontsize=12)
+        plt.ylabel('Average Price', fontsize=12)
+        plt.grid(True)
+
+        # Save plot to BytesIO
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        plt.close()
+
+        return Response(buf, mimetype='image/png')
+    except Exception as e:
+        return f"An error occurred while processing the file: {e}"
+
 if __name__ == '__main__':
     app.run(debug=True)
