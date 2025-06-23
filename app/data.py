@@ -12,6 +12,15 @@ def load_dataframe():
         # Load the file into a Pandas DataFrame
         df = pd.read_csv(file_path, sep=",", engine="python", parse_dates=['Date'], infer_datetime_format=True)
 
+        # Filter the DataFrame for dates within the specified range
+        start_date = "2008-11-10"
+        end_date = "2017-11-10"
+        df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
+
+        # Drop the "OpenInt" column if it exists
+        if 'OpenInt' in df.columns:
+            df = df.drop(columns=['OpenInt'])
+
         # Convert the DataFrame to an HTML table
         html_table = df.to_html(classes='table table-striped', index=False)
 
@@ -20,12 +29,12 @@ def load_dataframe():
         <!DOCTYPE html>
         <html>
         <head>
-            <title>DataFrame Viewer</title>
+            <title>Filtered Visa Data</title>
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         </head>
         <body>
             <div class="container">
-                <h1 class="mt-5">Visa Inc. (V) Data</h1>
+                <h1 class="mt-5">Filtered Visa Inc. (V) Data</h1>
                 {html_table}
             </div>
         </body>

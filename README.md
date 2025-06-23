@@ -12,6 +12,10 @@
 
 ### 2nd Commit
 
+- Filter rows to only show rows that are dated from 2008-11-10 to 2017-11-10.
+
+- Drop the OpenInt column.
+
 ### 3rd Commit
 
 ### 4th Commit
