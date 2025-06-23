@@ -1,5 +1,7 @@
 from flask import Flask, render_template_string, Response
 import pandas as pd
+import io
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 
@@ -41,6 +43,38 @@ def load_dataframe():
         </html>
         """
         return render_template_string(html_template)
+    except Exception as e:
+        return f"An error occurred while processing the file: {e}"
+
+@app.route('/line_chart')
+def line_chart():
+    file_path = r"C:\Users\avram\OneDrive\Desktop\TRG Week 29\v.us.txt"
+    try:
+        # Load and filter the DataFrame
+        df = pd.read_csv(file_path, sep=",", engine="python", parse_dates=['Date'], infer_datetime_format=True)
+        df = df[(df['Date'] >= "2008-11-10") & (df['Date'] <= "2017-11-10")]
+        if 'OpenInt' in df.columns:
+            df = df.drop(columns=['OpenInt'])
+
+        # Plot the data
+        plt.figure(figsize=(14, 7))
+        plt.plot(df['Date'], df['Open'], label='Open', color='blue')
+        plt.plot(df['Date'], df['High'], label='High', color='green')
+        plt.plot(df['Date'], df['Low'], label='Low', color='red')
+        plt.plot(df['Date'], df['Close'], label='Close', color='orange')
+        plt.title('Daily Stock Prices (2008-2017)', fontsize=16)
+        plt.xlabel('Date', fontsize=12)
+        plt.ylabel('Price', fontsize=12)
+        plt.legend()
+        plt.grid(True)
+
+        # Save plot to BytesIO
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        plt.close()
+
+        return Response(buf, mimetype='image/png')
     except Exception as e:
         return f"An error occurred while processing the file: {e}"
 

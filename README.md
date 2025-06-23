@@ -18,6 +18,8 @@
 
 ### 3rd Commit
 
+- Visualize daily changes in the stock's "Open," "High," "Low," and "Close" prices through "/line_chart"
+
 ### 4th Commit
 
 ### 5th Commit
